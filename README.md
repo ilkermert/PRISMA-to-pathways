@@ -28,7 +28,7 @@ One internal script reads a single Excel workbook and produces the figures, tabl
 
 ## 2.1 Identification and Screening (PRISMA)
 
-Records were retrieved from the Web of Science Core Collection (all indexes) on 27 July 2026. The search was not restricted by year, language or document type.
+Records were retrieved from the Web of Science Core Collection (all indexes) on 27 July 2026, following PRISMA 2020 guidance [1]. The search was not restricted by year, language or document type.
 
 ```
 (hydrogen) [Title] AND
@@ -59,7 +59,7 @@ N_weak = int((sc <= 2).sum())
 
 ## 2.2 Bibliometric Performance Analysis
 
-Author and index keywords are merged and counted once per record. Keywords with at least 25 occurrences become nodes, co-occurrence in a record gives an edge with a minimum weight of 2, and communities are found with the Louvain method.
+Author and index keywords are merged and counted once per record with pandas [2]. Keywords with at least 25 occurrences become nodes, co-occurrence in a record gives an edge with a minimum weight of 2, and communities are found with the Louvain method [3] as implemented in NetworkX [4].
 
 ```python
 freq = {}
@@ -83,7 +83,7 @@ comms = sorted(louvain_communities(G, weight="weight", seed=s_0, resolution=1.0)
 
 ## 2.3 BERTopic Topic Modelling
 
-The embedding model is `all-MiniLM-L6-v2`. Embeddings are computed from the title and abstract and passed to BERTopic. The clustering parameters are the ones reported in the paper.
+Topics are extracted with BERTopic [5]. The embedding model is `all-MiniLM-L6-v2` [6], used within the Sentence-BERT framework [7]. Dimension reduction uses UMAP [8] and clustering uses HDBSCAN [9]. Embeddings are computed from the title and abstract and passed to BERTopic. The clustering parameters are the ones reported in the paper.
 
 ```python
 def make_topic_model(m_cs_=m_cs, k_nn_=k_nn, seed_=s_0):
@@ -280,6 +280,26 @@ BERTopic runs reported in the paper:
 - The topic partition can differ between software environments, even with a fixed seed. Two re-estimations of the manuscript configuration produced different partitions in this study, and the source of the difference could not be determined from the available records. The paper therefore reports stability across seeds, parameters, outlier handling and subsamples instead of a single run.
 - The stored assignment used in the paper cannot be reproduced exactly from this repository.
 - The script draws Figures 1 to 9 and Algorithm 1 of the paper from the data of the input workbook.
+
+## References
+
+[1] Page MJ, McKenzie JE, Bossuyt PM, Boutron I, Hoffmann TC, Mulrow CD, et al. The PRISMA 2020 statement: an updated guideline for reporting systematic reviews. BMJ 2021;372:n71.
+
+[2] McKinney W. Data structures for statistical computing in Python. Proc 9th Python Sci Conf 2010:51-6.
+
+[3] Blondel VD, Guillaume J-L, Lambiotte R, Lefebvre E. Fast unfolding of communities in large networks. J Stat Mech 2008;2008:P10008.
+
+[4] Hagberg A, Schult D, Swart P. Exploring network structure, dynamics, and function using NetworkX. Proc 7th Python Sci Conf (SciPy2008) 2008:11-5.
+
+[5] Grootendorst M. BERTopic: Neural topic modeling with a class-based TF-IDF procedure. arXiv:2203.05794 2022.
+
+[6] Wang W, Wei F, Dong L, Bao H, Yang N, Zhou M. MiniLM: Deep self-attention distillation for task-agnostic compression of pre-trained transformers. Adv Neural Inf Process Syst 2020;33:5776-88.
+
+[7] Reimers N, Gurevych I. Sentence-BERT: Sentence embeddings using Siamese BERT-networks. Proc 2019 Conf Empir Methods Nat Lang Process (EMNLP) 2019.
+
+[8] McInnes L, Healy J, Melville J. UMAP: Uniform manifold approximation and projection for dimension reduction. arXiv:1802.03426 2018.
+
+[9] McInnes L, Healy J. Accelerated hierarchical density based clustering. 2017 IEEE Int Conf Data Min Workshops (ICDMW) 2017:33-42.
 
 ## Citation
 
