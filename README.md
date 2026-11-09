@@ -1,6 +1,6 @@
 # PRISMA-to-Pathways: Research and Technology Development Pathways for Large-Scale Green Hydrogen
 
-Authors: İlker Mert, Hüseyin Yağlı, Victor M. Ambriz-Diaz
+Authors: İlker Mert, Hüseyin Yağlı, Victor M. Ambriz-Diaz*
 
 This repository contains representative code excerpts and methodological documentation for the research article (under review):
 
