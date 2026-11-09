@@ -1,29 +1,34 @@
-# PRISMA-to-pathways analysis of the large-scale green hydrogen literature
+# PRISMA-to-Pathways: Research and Technology Development Pathways for Large-Scale Green Hydrogen
 
-Selected code and settings that accompany a manuscript under review on a PRISMA-based bibliometric study of
-large-scale green hydrogen applications. The study combines PRISMA identification, bibliometric analysis,
-BERTopic topic modelling, a technology readiness assessment and research and technology development pathways.
+Authors: İlker Mert, Hüseyin Yağlı, Victor M. Ambriz-Diaz
+Repository maintained by: İlker Mert (ilkermert@osmaniye.edu.tr)
 
-This repository holds one file, this README. It describes the analysis and shows the key parts of the code,
-so that a reader can see how each step was done. It is not the full codebase and it does not allow the
-tables and figures of the paper to be reproduced.
+This repository contains representative code excerpts and methodological documentation for the research article (under review):
 
-## What is shared and what is not
+"From Research Trends to Deployment Pathways: A PRISMA-Based Bibliometric Study and Roadmap for Large-Scale Green Hydrogen Applications Toward 2050"
 
-| Item | Status |
-|---|---|
-| Search query, search date, filters and record counts | Shared below |
-| Model parameters and software versions | Shared below |
-| Key code excerpts | Shared below |
-| Summary results of the robustness and search sensitivity analyses | In the Supplementary Material of the paper |
-| Web of Science records (titles, abstracts, identifiers) | **Not shared.** The records are governed by the database licence and cannot be redistributed |
-| Complete analysis code, document-level topic assignments, input workbook | Not public. They form part of ongoing research |
+It follows the manuscript's own section order: each subsection below states the methodological component as described in the paper, immediately followed by a representative code excerpt implementing it.
 
-The paper does not claim that its results can be reproduced from the material in this repository.
+> **Note on scope:** These are representative excerpts of the core methodological steps, included for transparency and to show how each step was done. The complete analysis script, the Web of Science records, the document-level topic assignments and the input workbook are not included, see "Contact and Data Availability" below. This repository does not allow the tables and figures of the paper to be reproduced, and the paper does not claim that it does.
 
-## Data source
+## About the Study
 
-Records were retrieved from the Web of Science Core Collection (all indexes) on 27 July 2026.
+The study combines a PRISMA-based identification of Web of Science records, a bibliometric performance analysis, BERTopic topic modelling, a technology readiness assessment and the construction of research and technology development pathways for large-scale green hydrogen applications. The pathways are derived from the literature. They are not deployment forecasts.
+
+One internal script reads a single Excel workbook and produces the figures, tables and checks of the paper. Every printed number that the script can recompute is compared with the value in the manuscript by a `check()` call.
+
+| Stage | Content | Needs sentence embeddings |
+|---|---|---|
+| `core` | PRISMA counts, bibliometrics, keyword network, topic table, temporal windows, tests of topic shares, readiness matrix, pathways figure, evaluator agreement | No |
+| `rerun` | Re-estimation of the manuscript BERTopic configuration | Yes |
+| `robustness` | Parameter, seed, outlier-handling and subsample grid | Yes |
+| `cohesion` | Cluster cohesion with random baselines | Yes |
+| `threshold` | Relevance-threshold sensitivity | Yes |
+| `search` | Relaxed-search sensitivity | Yes |
+
+## 2.1 Identification and Screening (PRISMA)
+
+Records were retrieved from the Web of Science Core Collection (all indexes) on 27 July 2026. The search was not restricted by year, language or document type.
 
 ```
 (hydrogen) [Title] AND
@@ -32,8 +37,6 @@ Records were retrieved from the Web of Science Core Collection (all indexes) on 
 ("large-scale" OR "large scale" OR "deployment" OR "scale-up" OR "commercialization" OR "infrastructure"
  OR "roadmap" OR "pathway" OR "outlook" OR "future" OR "economy" OR "supply chain") [Title]
 ```
-
-The search returned 977 records. It was not restricted by year, language or document type.
 
 | Step | Records |
 |---|---|
@@ -45,48 +48,7 @@ The search returned 977 records. It was not restricted by year, language or docu
 | Relevance score of 7 or higher (final corpus) | 659 |
 | Score 4 to 6 (borderline) and score 0 to 2 (weak match), excluded without a recorded manual decision | 122 and 7 |
 
-The relevance score is a heuristic. It counts the co-occurrence of core electrolysis terms, green or renewable
-hydrogen terms, scale and deployment terms and future-oriented terms in the title and abstract. It is not a
-manual PRISMA screening. The weights and term lists were not archived. A threshold sensitivity analysis is
-reported in the paper instead.
-
-## Structure of the analysis
-
-One internal script reads a single Excel workbook and produces the figures, tables and checks of the paper.
-
-| Stage | Content | Paper item | Needs sentence embeddings |
-|---|---|---|---|
-| `core` | PRISMA counts, bibliometrics, keyword network, topic table, temporal windows, Wilson intervals, tests of topic shares, readiness matrix, pathways figure, evaluator agreement | Tables 1 to 4, Figures 1 to 9, S8, S9, S11, S12, S14, S15 | No |
-| `rerun` | Re-estimation of the manuscript BERTopic configuration | Section 3.4 | Yes |
-| `robustness` | Parameter, seed, outlier-handling and subsample grid | S1 to S3 | Yes |
-| `cohesion` | Cluster cohesion with random baselines | S13 | Yes |
-| `threshold` | Relevance-threshold sensitivity | S10, S10b, S10c | Yes |
-| `search` | Relaxed-search sensitivity | S4 to S7 | Yes |
-
-Every printed number of the paper that the script can recompute is compared with the value in the manuscript
-by a `check()` call. A run ends with a list of passed and failed checks.
-
-### Input workbook (not distributed)
-
-| Sheet | Content |
-|---|---|
-| `corpus` | The 659 records with the stored BERTopic assignment (`bertopic_topic`) |
-| `wos_raw_977` | The original export of 977 records (selected fields) |
-| `screening_788` | Relevance-scored list of the 788 eligible records |
-| `scope_excluded_67` | Records excluded by the scope rules, with the reason |
-| `wos_q4`, `wos_q3a` | Two relaxed searches used for the search sensitivity analysis |
-| `table3_authors`, `table4_benchmark` | Tables 3 and 4 of the paper |
-| `trl_raters`, `rubric` | Ratings of the two independent external evaluators and the rubric they received |
-| `embeddings` (optional) | Sentence embeddings. If absent, they are computed with sentence-transformers |
-
-## Key code
-
-The excerpts below are cut directly from the script.
-
-### Relevance-score bands
-
-`scr` is the scored list of the 788 eligible records and `S_min` is 7. The bands are counted from the
-scores. The check lines of the script compare them with the numbers of the paper.
+The relevance score is a heuristic. It counts the co-occurrence of core electrolysis terms, green or renewable hydrogen terms, scale and deployment terms and future-oriented terms in the title and abstract. It is not a manual PRISMA screening. The weights and term lists were not archived, so a threshold sensitivity analysis is reported in the paper instead (see "Sensitivity analyses" below). The bands are counted from the scores of the 788 eligible records:
 
 ```python
 sc = pd.to_numeric(scr["Relevance_Score"])
@@ -95,10 +57,33 @@ N_bord = int(sc.between(4, 6).sum())
 N_weak = int((sc <= 2).sum())
 ```
 
-### BERTopic configuration
+## 2.2 Bibliometric Performance Analysis
 
-The embedding model is `all-MiniLM-L6-v2`. Embeddings are computed from the title and abstract, passed to
-BERTopic, and the clustering uses the parameters below. The parameters are the ones reported in the paper.
+Author and index keywords are merged and counted once per record. Keywords with at least 25 occurrences become nodes, co-occurrence in a record gives an edge with a minimum weight of 2, and communities are found with the Louvain method.
+
+```python
+freq = {}
+for ks in doc_kws:
+    for k in ks:
+        freq[k] = freq.get(k, 0) + 1
+keep = {k for k, v in freq.items() if v >= f_min}
+ew = {}
+for ks in doc_kws:
+    for a, b in itertools.combinations(sorted(set(k for k in ks if k in keep)), 2):
+        ew[(a, b)] = ew.get((a, b), 0) + 1
+G = nx.Graph()
+for k in sorted(keep):
+    G.add_node(k, freq=freq[k])
+for (a, b), w in ew.items():
+    if w >= e_min:
+        G.add_edge(a, b, weight=w)
+G.remove_nodes_from(list(nx.isolates(G)))
+comms = sorted(louvain_communities(G, weight="weight", seed=s_0, resolution=1.0), key=len, reverse=True)
+```
+
+## 2.3 BERTopic Topic Modelling
+
+The embedding model is `all-MiniLM-L6-v2`. Embeddings are computed from the title and abstract and passed to BERTopic. The clustering parameters are the ones reported in the paper.
 
 ```python
 def make_topic_model(m_cs_=m_cs, k_nn_=k_nn, seed_=s_0):
@@ -113,12 +98,7 @@ def make_topic_model(m_cs_=m_cs, k_nn_=k_nn, seed_=s_0):
                     calculate_probabilities=False, verbose=False)
 ```
 
-### Outlier reduction
-
-HDBSCAN leaves a large share of documents unassigned (37.9% in the stored run). When the outlier rate exceeds
-0.25, the unassigned documents are reassigned with c-TF-IDF. The paper reports how much this choice
-changes the result. Without reassignment, Topic 0 has at least as many documents as Topic 1 in the 2025 window
-in every valid re-estimation of the grid (6 to 14 initial topics), whereas Topic 1 is the largest topic in the stored assignment.
+HDBSCAN leaves a large share of documents unassigned (37.9% in the stored run). When the outlier rate exceeds 0.25, the unassigned documents are reassigned with c-TF-IDF. Without reassignment, Topic 0 has at least as many documents as Topic 1 in the 2025 window in every valid re-estimation of the grid (6 to 14 initial topics), whereas Topic 1 is the largest topic in the stored assignment.
 
 ```python
 tm = make_topic_model()
@@ -129,11 +109,19 @@ n_init = int(len(set(t0)) - (1 if -1 in t0 else 0))
 final = np.array(tm.reduce_outliers(CORPUS_DOCS, t0.tolist(), strategy="c-tf-idf")) if out_rate > r_o else t0.copy()
 ```
 
-### Intervals and tests of the topic shares
+Cluster cohesion is the mean pairwise cosine similarity between the document embeddings of the members of a cluster. It is compared with random subsets of the same size.
 
-Topic shares in a window are reported with Wilson score intervals. Differences between periods are tested with
-Fisher exact tests per topic, a Holm correction across the ten topics, and a permutation test of the whole
-topic distribution. The paper treats the overlap of intervals as descriptive and not as a test.
+```python
+def pair_stats(idx):
+    if len(idx) < 3:
+        return len(idx), np.nan, np.nan, np.nan
+    v = (emb[idx] @ emb[idx].T)[np.triu_indices(len(idx), k=1)]
+    return len(idx), float(v.mean()), float(np.median(v)), float(v.std(ddof=1))
+```
+
+## 2.4 Temporal Topic Evolution
+
+Topic shares are computed in windows centred on 2015, 2020 and 2025 with a half-width of one year. They are reported with Wilson score intervals. The paper treats the overlap of intervals as descriptive and not as a formal test.
 
 ```python
 def wilson(k, n, z=z_a):
@@ -146,6 +134,8 @@ def wilson(k, n, z=z_a):
     h = z * np.sqrt(p * (1 - p) / n + z ** 2 / (4 * n ** 2)) / den
     return (p, max(0.0, c - h), min(1.0, c + h))
 ```
+
+Differences between periods are tested with Fisher exact tests per topic, a Holm correction across the ten topics, and a permutation test of the whole topic distribution.
 
 ```python
 def holm(pvals):
@@ -174,13 +164,24 @@ for _ in range(N_PERM):
 pperm = (cnt + 1) / (N_PERM + 1)
 ```
 
-The same tests are run for five pairs of periods of equal length (Supplementary Table S14). Four of them contain
-only complete years and form the main sensitivity analysis. The fifth is the pair of windows of Section 3.5.
+The same tests are run for five pairs of periods of equal length. Four of them contain only complete years and form the main sensitivity analysis. The fifth is the pair of windows of Section 3.5. Growth is compared between the complete periods 2020 to 2022 and 2023 to 2025 and is reported for description only.
 
-### Readiness classification and horizons
+## 2.5 Technology Readiness Level and Systems/Market Readiness Assessment
 
-Clusters are placed on horizons from their readiness classification only. Publication growth is reported next to
-the classification and is not an input to this rule.
+Clusters were rated by the authors. Two independent external evaluators then rated all ten clusters with the same written rubric on a blind form. Topic 0 was rated as one cluster, so its sub-clusters 0a and 0b are the authors' classification. The paper reports raw agreement and does not report kappa statistics.
+
+```python
+n_type = int((A["Type"] == B["Type"]).sum())
+num = lambda s: pd.to_numeric(s, errors="coerce")
+both_trl = num(A["TRL"]).notna() & num(B["TRL"]).notna()
+n_trl, d_trl = int(((num(A["TRL"]) == num(B["TRL"])) & both_trl).sum()), int(both_trl.sum())
+both_rd = num(A["Readiness"]).notna() & num(B["Readiness"]).notna()
+n_rd, d_rd = int(((num(A["Readiness"]) == num(B["Readiness"])) & both_rd).sum()), int(both_rd.sum())
+```
+
+## 2.6 Pathway Construction
+
+Clusters are placed on horizons from their readiness classification only. Publication growth is reported next to the classification and is not an input to this rule. Clusters on policy, market, infrastructure and supply chain topics are shown as enabling conditions that run in parallel.
 
 ```python
 def horizon_rule(row):
@@ -199,24 +200,9 @@ def horizon_rule(row):
     return "Research indicator"
 ```
 
-### Cluster cohesion
+## Sensitivity Analyses (Sections 3.4 and 3.5)
 
-Cohesion is the mean pairwise cosine similarity between the document embeddings of the members of a cluster.
-It is compared with random subsets of the same size.
-
-```python
-def pair_stats(idx):
-    if len(idx) < 3:
-        return len(idx), np.nan, np.nan, np.nan
-    v = (emb[idx] @ emb[idx].T)[np.triu_indices(len(idx), k=1)]
-    return len(idx), float(v.mean()), float(np.median(v)), float(v.std(ddof=1))
-```
-
-### Relevance-threshold sensitivity
-
-Records below the threshold are assigned to the nearest topic centroid of the stored assignment. The threshold
-`tau` is the 5th percentile of the similarity between each stored document and its own centroid. It is not a
-relevance criterion. This is a centroid-based approximation and not the original topic model.
+Records below the relevance threshold are assigned to the nearest topic centroid of the stored assignment. The similarity threshold `tau` is the 5th percentile of the similarity between each stored document and its own centroid. It is not a relevance criterion. This is a centroid-based approximation and not the original topic model.
 
 ```python
 C = np.vstack([E_fin[topics == t].mean(axis=0) for t in T])
@@ -228,6 +214,8 @@ cand["assigned_topic"] = [T[j] for j in S_.argmax(axis=1)]
 cand["similarity"] = S_.max(axis=1)
 cand["inside_structure"] = cand.similarity >= tau
 ```
+
+The `robustness` stage varies HDBSCAN `min_cluster_size` (8, 12, 16), UMAP `n_neighbors` (10, 15, 25), five random seeds and three outlier treatments, and repeats the manuscript configuration on 20 subsamples of 80% of the records. The `search` stage assigns records from two relaxed Web of Science queries to the stored topic structure.
 
 ## Parameters
 
@@ -241,39 +229,79 @@ cand["inside_structure"] = cand.similarity >= tau
 | `r_o` | Outlier-rate trigger for outlier reduction | 0.25 |
 | `s_0` | Random seed | 42 |
 | `w_h` | Window half-width in years | 1 |
-| `f_min`, `e_min` | Keyword frequency and edge weight thresholds of the keyword network | 25, 2 |
+| `f_min`, `e_min` | Keyword frequency and edge weight thresholds | 25, 2 |
 | `z_a` | z-value of the Wilson interval | 1.96 |
 
-Temporal windows are centred on 2015, 2020 and 2025 with a half-width of one year. Growth is compared between
-the complete periods 2020 to 2022 and 2023 to 2025.
+## Data Sources
 
-## Software
+### Web of Science Records
 
-Versions used for the BERTopic runs reported in the paper:
+The records (titles, abstracts, identifiers) were exported from the Web of Science Core Collection. They are governed by the database licence and cannot be redistributed, so they are not part of this repository.
 
-```
-bertopic==0.17.4
-umap-learn==0.5.12
-hdbscan==0.8.44
-sentence-transformers==5.7.0
-scikit-learn==1.6.1
-numpy, pandas, scipy, networkx, matplotlib, openpyxl
-```
+### Input Workbook (not distributed)
 
-## How to read the results
+| Sheet | Content |
+|---|---|
+| `corpus` | The 659 records with the stored BERTopic assignment |
+| `wos_raw_977` | The original export of 977 records (selected fields) |
+| `screening_788` | Relevance-scored list of the 788 eligible records |
+| `scope_excluded_67` | Records excluded by the scope rules, with the reason |
+| `wos_q4`, `wos_q3a` | Two relaxed searches for the search sensitivity analysis |
+| `table3_authors`, `table4_benchmark` | Tables 3 and 4 of the paper |
+| `trl_raters`, `rubric` | Ratings of the two independent external evaluators and the rubric they received |
+| `embeddings` (optional) | Sentence embeddings. If absent, they are computed with sentence-transformers |
 
-- The topic partition can differ between software environments, even with a fixed seed. Two re-estimations of
-  the manuscript configuration produced different partitions in this study, and the source of the difference
-  could not be determined from the available records. The paper therefore reports stability across seeds,
-  parameters, outlier handling and subsamples instead of a single run.
+## Software Environment
+
+Core stage (local run):
+
+| Package | Version | Role |
+|---|---|---|
+| Python | 3.12.3 | Core implementation |
+| NumPy | 2.4.4 | Array computation and random-number generation |
+| SciPy | 1.17.1 | Fisher exact and chi-square tests |
+| pandas | 3.0.2 | Record handling |
+| NetworkX | 3.6.1 | Keyword network and Louvain communities |
+| Matplotlib | 3.10.8 | Figure generation |
+| openpyxl | 3.1.5 | Workbook input and output |
+
+BERTopic runs reported in the paper:
+
+| Package | Version | Role |
+|---|---|---|
+| BERTopic | 0.17.4 | Topic modelling |
+| UMAP (umap-learn) | 0.5.12 | Dimension reduction |
+| HDBSCAN | 0.8.44 | Clustering |
+| sentence-transformers | 5.7.0 | Embeddings (`all-MiniLM-L6-v2`) |
+| scikit-learn | 1.6.1 | Vectorizer and agreement metrics |
+
+## How to Read the Results
+
+- The topic partition can differ between software environments, even with a fixed seed. Two re-estimations of the manuscript configuration produced different partitions in this study, and the source of the difference could not be determined from the available records. The paper therefore reports stability across seeds, parameters, outlier handling and subsamples instead of a single run.
 - The stored assignment used in the paper cannot be reproduced exactly from this repository.
-- Several figures of the paper are typeset versions. A figure drawn by the script from the same data can differ
-  in styling.
+- The script draws Figures 1 to 9 and Algorithm 1 of the paper from the data of the input workbook.
 
 ## Citation
 
-Please cite the paper once it is published. The reference will be added here.
+If you use this code or methodology in your research, please cite:
 
-## Licence
+```
+Mert, İ., Yağlı, H., & Ambriz-Diaz, V. M. (2026). From Research Trends to Deployment Pathways:
+A PRISMA-Based Bibliometric Study and Roadmap for Large-Scale Green Hydrogen Applications
+Toward 2050. International Journal of Hydrogen Energy (under review).
+```
 
-[To be confirmed by the authors before release.]
+## License
+
+This code is made available under the MIT License.
+
+## Contact and Data Availability
+
+The Web of Science records cannot be shared or redistributed because of the database licence. The complete analytical codebase, the document-level topic assignments and the input workbook are not publicly available because they form part of ongoing research. Summary results of the robustness analysis and of the search sensitivity analysis are provided in the Supplementary Material of the paper.
+
+For questions regarding the methodology, please contact:
+İlker Mert, ilkermert@osmaniye.edu.tr
+
+---
+
+This README accompanies representative code excerpts for the article referenced above. Last updated: November 2026
