@@ -275,8 +275,9 @@ BERTopic runs reported in the paper:
 
 ## How to Read the Results
 
-- The topic partition can differ between software environments, even with a fixed seed. Two re-estimations of the manuscript configuration produced different partitions in this study, and the source of the difference could not be determined from the available records. The paper therefore reports stability across seeds, parameters, outlier handling and subsamples instead of a single run.
-- The stored assignment used in the paper cannot be reproduced exactly from this repository.
+- The results of topic modelling depend on the software environment, even with a fixed seed. For this reason the paper does not rest on a single run. It reports how the findings behave across seeds, parameter settings, outlier handling and data subsamples (Supplementary Tables S1 to S3), and it describes the topic proportions as properties of the title-restricted corpus.
+- Two re-estimations of the manuscript configuration gave different partitions, and the source of the difference could not be determined from the available records. The paper reports this in Sections 3.4 and 5.4.
+- The excerpts in this repository illustrate the method. The stored topic assignment and the data are not distributed, so the excerpts are meant for reading.
 
 ## References
 
