@@ -15,8 +15,6 @@ It follows the manuscript's own section order: each subsection below states the 
 
 The study combines a PRISMA-based identification of Web of Science records, a bibliometric performance analysis, BERTopic topic modelling, a technology readiness assessment and the construction of research and technology development pathways for large-scale green hydrogen applications. The pathways are derived from the literature. They are not deployment forecasts.
 
-One internal script reads a single Excel workbook and produces the figures, tables and checks of the paper. Every printed number that the script can recompute is compared with the value in the manuscript by a `check()` call.
-
 | Stage | Content | Needs sentence embeddings |
 |---|---|---|
 | `core` | PRISMA counts, bibliometrics, keyword network, topic table, temporal windows, tests of topic shares, readiness matrix, pathways figure, evaluator agreement | No |
