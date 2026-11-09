@@ -2,8 +2,6 @@
 
 Authors: İlker Mert, Hüseyin Yağlı, Victor M. Ambriz-Diaz
 
-Repository maintained by: İlker Mert (ilkermert@osmaniye.edu.tr)
-
 This repository contains representative code excerpts and methodological documentation for the research article (under review):
 
 "From Research Trends to Deployment Pathways: A PRISMA-Based Bibliometric Study and Roadmap for Large-Scale Green Hydrogen Applications Toward 2050"
@@ -318,6 +316,8 @@ This code is made available under the MIT License.
 
 The Web of Science records cannot be shared or redistributed because of the database licence. The complete analytical codebase, the document-level topic assignments and the input workbook are not publicly available because they form part of ongoing research. Summary results of the robustness analysis and of the search sensitivity analysis are provided in the Supplementary Material of the paper.
 
+
+Repository maintained by: İlker Mert (ilkermert@osmaniye.edu.tr)
 For questions regarding the methodology, please contact:
 İlker Mert, ilkermert@osmaniye.edu.tr
 
