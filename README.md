@@ -279,7 +279,6 @@ BERTopic runs reported in the paper:
 
 - The topic partition can differ between software environments, even with a fixed seed. Two re-estimations of the manuscript configuration produced different partitions in this study, and the source of the difference could not be determined from the available records. The paper therefore reports stability across seeds, parameters, outlier handling and subsamples instead of a single run.
 - The stored assignment used in the paper cannot be reproduced exactly from this repository.
-- The script draws Figures 1 to 9 and Algorithm 1 of the paper from the data of the input workbook.
 
 ## References
 
