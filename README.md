@@ -1,4 +1,4 @@
-# PRISMA-to-Pathways: Research and Technology Development Pathways for Large-Scale Green Hydrogen
+# Linking Green Hydrogen Research Themes to Technology Readiness: A PRISMA-Based Bibliometric Study and Research Roadmap in Support of 2030–2050 Targets
 
 Authors: İlker Mert, Hüseyin Yağlı, Victor M. Ambriz-Diaz*
 
@@ -303,9 +303,7 @@ BERTopic runs reported in the paper:
 If you use this code or methodology in your research, please cite:
 
 ```
-Mert, İ., Yağlı, H., & Ambriz-Diaz, V. M. (2026). From Research Trends to Deployment Pathways:
-A PRISMA-Based Bibliometric Study and Roadmap for Large-Scale Green Hydrogen Applications
-Toward 2050. International Journal of Hydrogen Energy (under review).
+Mert, İ., Yağlı, H., & Ambriz-Diaz, V. M. (2026). Linking Green Hydrogen Research Themes to Technology Readiness: A PRISMA-Based Bibliometric Study and Research Roadmap in Support of 2030–2050 Targets. International Journal of Hydrogen Energy.
 ```
 
 ## License
